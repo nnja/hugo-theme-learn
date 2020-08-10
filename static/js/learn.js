@@ -1,3 +1,27 @@
+// Add a language label per each code block
+$("pre").each(function (i, e) {
+    // Intialize with empty value
+    $(e).attr("data-title", " ");
+});
+
+$("pre code").each(function (i, e) {
+    var code = $(e);
+    var pre = code.parent();
+
+    var html_class = code.attr('class')
+    var language = html_class ? html_class.replace('language-', '') : "text";
+    var text_block = pre.text();
+
+    if (language == "python" && text_block.includes(">>> ")) {
+        language = "python repl";
+    }
+    else if (language == "bash") {
+        language = "shell";
+    }
+    
+    pre.attr("data-title", language);
+});
+
 // Scrollbar Width function
 function getScrollBarWidth() {
     var inner = document.createElement('p');
@@ -183,8 +207,33 @@ jQuery(document).ready(function() {
             if (!clipInit) {
                 var text, clip = new ClipboardJS('.copy-to-clipboard', {
                     text: function(trigger) {
-                        text = $(trigger).prev('code').text();
-                        return text.replace(/^\$\s/gm, '');
+                        code_block = $(trigger).prev('code')
+                        text_block = code_block.text();
+                        code_class = code_block.attr('class')
+
+                        is_python = code_class.includes("language-python")
+                        is_python_repl = text_block.includes(">>> ");
+
+                        // Remove REPL characters and spacing when copying Python code.
+                        // So the copied result can be pasted directly into the REPL, without
+                        // the trailing newline.
+                        // Remove ">>> " and "... "
+                        if (is_python && is_python_repl) {
+                            console.log("python repl");
+                            // remove anything not starting with >>> or ...
+                            text_block = text_block.replace(/^((?!>>> |... ).*\n?)/gm, '');
+
+                            // remove the >>> and ... and ^
+                            text_block = text_block.replace(/^(>>> |\.\.\. |\s+\^)/gm, '');
+
+                            // remove the trailing new line
+                            text_block = text_block.replace(/[\s]+$/g, '');
+
+                            return text_block;
+                        }
+                        else {
+                            return text_block.replace(/^\$\s/gm, '');
+                        }
                     }
                 });
 
