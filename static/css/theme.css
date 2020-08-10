@@ -1083,8 +1083,8 @@ td {
 pre .copy-to-clipboard {
     position: absolute;
     right: 4px;
-    top: 4px;
-    background-color: #C1C4C6;
+    top:10px;
+    background-color: #ddd;
     color: #ccc;
     border-radius: 2px;
 }
