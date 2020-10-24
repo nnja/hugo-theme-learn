@@ -220,8 +220,12 @@ jQuery(document).ready(function() {
                         // Remove ">>> " and "... "
                         if (is_python && is_python_repl) {
                             console.log("python repl");
+
                             // remove anything not starting with >>> or ...
-                            text_block = text_block.replace(/^((?!>>> |... ).*\n?)/gm, '');
+                            text_block = text_block.replace(/^((?!>>> |\.\.\.).*\n?)/gm, '');
+
+                            // replace only ... leaving just a newline
+                            text_block = text_block.replace(/^(\.\.\.$)/gm, '');
 
                             // remove the >>> and ... and ^
                             text_block = text_block.replace(/^(>>> |\.\.\. |\s+\^)/gm, '');
