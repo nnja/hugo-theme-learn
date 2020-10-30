@@ -207,13 +207,14 @@ jQuery(document).ready(function() {
             if (!clipInit) {
                 var text, clip = new ClipboardJS('.copy-to-clipboard', {
                     text: function(trigger) {
-                        code_block = $(trigger).prev('code')
+                        code_block = $(trigger).prev('code');
                         text_block = code_block.text();
-                        code_class = code_block.attr('class')
+                        code_class = code_block.attr('class');
 
-                        is_python = code_class.includes("language-python")
+                        is_python = code_class.includes("language-python");
                         is_python_repl = text_block.includes(">>> ");
-
+                        is_bash = code_class.includes("language-bash");
+                        is_ps = code_class.includes("language-powershell");
                         // Remove REPL characters and spacing when copying Python code.
                         // So the copied result can be pasted directly into the REPL, without
                         // the trailing newline.
@@ -233,6 +234,12 @@ jQuery(document).ready(function() {
                             // remove the trailing new line
                             text_block = text_block.replace(/[\s]+$/g, '');
 
+                            return text_block;
+                        } else if (is_bash) {
+                            text_block = text_block.replace(/^\(env\)\s\$\s/gm, '');
+                            return text_block;
+                        } else if (is_ps) {
+                            text_block = text_block.replace(/^>\s/gm, '');
                             return text_block;
                         }
                         else {
